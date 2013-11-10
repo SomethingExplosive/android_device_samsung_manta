@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2013 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,25 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-for FILE in `cat proprietary-blobs.txt | grep -v "^#"`; do
-    # FILE format is src':'dest, so parse it
-    DEST=${FILE##*:}
-    saveIFS=$IFS
-    IFS=":"
-    SRC=($FILE)
-    IFS=$saveIFS
-    SRC=${SRC[0]}
+LOCAL_PATH:= $(call my-dir)
+include $(CLEAR_VARS)
 
-    # create the dest dir if necessary
-    DIR=`dirname $DEST`
-    if [ ! -d ${DIR} ]; then
-	echo mkdir -p ${DIR}
-        mkdir -p ${DIR}
-    fi
+LOCAL_C_INCLUDES := system/core/healthd
 
-    # pull the file off the device into dest
-    echo adb pull ${SRC} ${DEST}
-    adb pull ${SRC} ${DEST}
-done
+LOCAL_SRC_FILES := healthd-manta.cpp
 
-./setup-makefiles.sh
+LOCAL_MODULE := libhealthd.manta
+
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_STATIC_LIBRARY)
